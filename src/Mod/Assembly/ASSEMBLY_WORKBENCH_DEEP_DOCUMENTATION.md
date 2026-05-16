@@ -21,7 +21,7 @@ So the assembly side of the integration is fully documented here, while the solv
 
 ## 2) End-to-end architecture
 
-## 2.1 Layers
+### 2.1 Layers
 
 - **App layer (`src/Mod/Assembly/App`)**
   - Core model object: `Assembly::AssemblyObject`
@@ -37,7 +37,7 @@ So the assembly side of the integration is fully documented here, while the solv
   - `JointObject.py` defines joint FeaturePython objects and view providers
   - Utility layer (`UtilsAssembly.py`) for selection/reference/geometry helpers
 
-## 2.2 High-level control flow
+### 2.2 High-level control flow
 
 ```mermaid
 flowchart TD
@@ -54,11 +54,11 @@ flowchart TD
 
 ## 3) Dragging a component in a constrained assembly
 
-## 3.1 Exact call sequence in GUI/App
+### 3.1 Exact call sequence in GUI/App
 
 ```mermaid
 flowchart TD
-  P[mouseButtonPressed pressed=true] --> M[mouseMove / tryMouseMove]
+  P[mouseButtonPressed(pressed=true)] --> M[mouseMove / tryMouseMove]
   M --> I[initMove / tryInitMove]
   I --> D[findDragMode]
   D --> PD[AssemblyObject::preDrag if SolveOnMove]
@@ -73,7 +73,7 @@ flowchart TD
   E --> PO[AssemblyObject::postDrag]
 ```
 
-## 3.2 How drag mode is selected (`ViewProviderAssembly::findDragMode`)
+### 3.2 How drag mode is selected (`ViewProviderAssembly::findDragMode`)
 
 Primary outcomes:
 - Fixed upstream chain -> walk to upstream movable part
@@ -84,7 +84,7 @@ Primary outcomes:
 - Some distance configurations -> translation-on-plane
 - No grounded anchor path -> translation-no-solve (downstream movement)
 
-## 3.3 Solver step details (`AssemblyObject::doDragStep`)
+### 3.3 Solver step details (`AssemblyObject::doDragStep`)
 
 Per drag update:
 1. Resolve dragged FreeCAD objects to mapped `ASMTPart` instances.
@@ -106,7 +106,7 @@ Per drag update:
 - Specialized joints: `ASMTAngleJoint`, `ASMTRackPinionJoint`, `ASMTScrewJoint`, `ASMTGearJoint`
 - Limits/motions/simulation terms: `ASMTRotationLimit`, `ASMTTranslationLimit`, `ASMTRotationalMotion`, `ASMTTranslationalMotion`, `ASMTGeneralMotion`, `ASMTTime`, `ASMTConstantGravity`, `ASMTSimulationParameters`
 
-## 4.1 FreeCAD joint type to solver joint type
+### 4.1 FreeCAD joint type to solver joint type
 
 Implemented by `makeMbdJointOfType()` + `makeMbdJointDistance()`:
 
@@ -123,7 +123,7 @@ Implemented by `makeMbdJointOfType()` + `makeMbdJointDistance()`:
 - Gears/Belt -> `ASMTGearJoint` (belt represented using sign conventions)
 - Distance -> resolved by geometry pair into joint forms such as planar, point-line, line-plane, etc.
 
-## 4.2 Solver lifecycle used by FreeCAD
+### 4.2 Solver lifecycle used by FreeCAD
 
 - `solve()` builds a fresh solver assembly and runs `runPreDrag()` for initial constrained solve.
 - `preDrag()` prepares drag context (including fixed-body bundling path).
@@ -134,7 +134,7 @@ Implemented by `makeMbdJointOfType()` + `makeMbdJointDistance()`:
 
 ## 5) Core classes and their roles (code-facing)
 
-## 5.1 App layer classes
+### 5.1 App layer classes
 
 - `AssemblyObject` (`App/AssemblyObject.h/.cpp`)
   - Root assembly object and solver façade.
@@ -149,7 +149,7 @@ Implemented by `makeMbdJointOfType()` + `makeMbdJointDistance()`:
 - `AssemblyUtils` (`App/AssemblyUtils.h/.cpp`)
   - Joint/property/selection/geometry helper functions used by App and GUI logic.
 
-## 5.2 GUI layer classes
+### 5.2 GUI layer classes
 
 - `ViewProviderAssembly` (`Gui/ViewProviderAssembly.h/.cpp`)
   - Main interactive view provider.
@@ -159,7 +159,7 @@ Implemented by `makeMbdJointOfType()` + `makeMbdJointDistance()`:
 - `TaskAssemblyMessages`
   - Solver state feedback UI plumbing.
 
-## 5.3 Python classes/modules
+### 5.3 Python classes/modules
 
 - Command modules:
   - `CommandCreateAssembly.py`, `CommandInsertLink.py`, `CommandInsertNewPart.py`
@@ -178,7 +178,7 @@ Implemented by `makeMbdJointOfType()` + `makeMbdJointDistance()`:
 
 This inventory is exhaustive for tracked files under `src/Mod/Assembly`.
 
-## 6.1 `src/Mod/Assembly/App` (C++ App layer)
+### 6.1 `src/Mod/Assembly/App` (C++ App layer)
 
 - `src/Mod/Assembly/App/AppAssembly.cpp` — App module type initialization/registration.
 - `src/Mod/Assembly/App/AppAssemblyPy.cpp` — Python exposure glue for App module objects.
@@ -215,7 +215,7 @@ This inventory is exhaustive for tracked files under `src/Mod/Assembly`.
 - `src/Mod/Assembly/App/ViewGroup.pyi` — Exploded-view group Python stub.
 - `src/Mod/Assembly/App/ViewGroupPyImp.cpp` — Exploded-view group Python binding implementation.
 
-## 6.2 `src/Mod/Assembly/Gui` (C++ GUI layer)
+### 6.2 `src/Mod/Assembly/Gui` (C++ GUI layer)
 
 - `src/Mod/Assembly/Gui/AppAssemblyGui.cpp` — GUI module registration for Assembly.
 - `src/Mod/Assembly/Gui/AppAssemblyGuiPy.cpp` — Python glue for GUI module.
@@ -242,9 +242,10 @@ This inventory is exhaustive for tracked files under `src/Mod/Assembly`.
 - `src/Mod/Assembly/Gui/ViewProviderViewGroup.cpp` — exploded-view group view provider behavior.
 - `src/Mod/Assembly/Gui/ViewProviderViewGroup.h` — exploded-view group view provider declaration.
 
-## 6.3 `src/Mod/Assembly` Python modules and config
+### 6.3 `src/Mod/Assembly` Python modules and config
 
 - `src/Mod/Assembly/CMakeLists.txt` — Assembly module build/install script list.
+- `src/Mod/Assembly/ASSEMBLY_WORKBENCH_DEEP_DOCUMENTATION.md` — this deep architecture and recursive file documentation.
 - `src/Mod/Assembly/Init.py` — non-GUI module initialization.
 - `src/Mod/Assembly/InitGui.py` — workbench class and command/toolbox setup.
 - `src/Mod/Assembly/AssemblyGlobal.h` — module export/import macro definitions.
@@ -266,7 +267,7 @@ This inventory is exhaustive for tracked files under `src/Mod/Assembly`.
 - `src/Mod/Assembly/TestAssemblyWorkbench.py` — test aggregator module.
 - `src/Mod/Assembly/UtilsAssembly.py` — assembly utility functions for refs/placements/mass/selection.
 
-## 6.4 Tests
+### 6.4 Tests
 
 - `src/Mod/Assembly/AssemblyTests/__init__.py` — test package marker.
 - `src/Mod/Assembly/AssemblyTests/TestCore.py` — core assembly/joint/solve tests.
@@ -275,7 +276,7 @@ This inventory is exhaustive for tracked files under `src/Mod/Assembly`.
 - `src/Mod/Assembly/AssemblyTests/mocks/__init__.py` — mocks package marker.
 - `src/Mod/Assembly/AssemblyTests/mocks/MockGui.py` — GUI mock builders.
 
-## 6.5 GUI resources
+### 6.5 GUI resources
 
 ### Resource index and UI/panel files
 - `src/Mod/Assembly/Gui/Resources/Assembly.qrc`
@@ -368,7 +369,7 @@ This inventory is exhaustive for tracked files under `src/Mod/Assembly`.
 
 This section focuses on classes/functions that define the assembly solve behavior and drag mechanics.
 
-## 7.1 `AssemblyObject` (selected high-impact methods)
+### 7.1 `AssemblyObject` (selected high-impact methods)
 
 - `solve(bool enableRedo=false)`
   - Ensures identity placements/sync state.
@@ -388,7 +389,7 @@ This section focuses on classes/functions that define the assembly solve behavio
 - `fixGroundedParts()/validateNewPlacements()`
   - Protects grounded constraints and rejects bad drag states.
 
-## 7.2 `ViewProviderAssembly` (selected high-impact methods)
+### 7.2 `ViewProviderAssembly` (selected high-impact methods)
 
 - `mouseButtonPressed()`
   - Starts/stops drag session and delegates finalize behavior.
@@ -403,7 +404,7 @@ This section focuses on classes/functions that define the assembly solve behavio
 - `initMoveDragger()/draggerMotionCallback()`
   - Coin dragger integration path.
 
-## 7.3 Python command/task objects (module-level view)
+### 7.3 Python command/task objects (module-level view)
 
 - `CommandCreateAssembly.py`
   - `CommandCreateAssembly`, `CommandActivateAssembly`, `ActivateAssemblyTaskPanel`.
@@ -452,6 +453,5 @@ If you are modifying solver behavior:
 ## 10) Validation notes for this documentation pass
 
 - This document was produced from the currently tracked source tree.
-- Assembly tracked files documented: **164** under `src/Mod/Assembly`.
+- Assembly tracked files documented: **164** under `src/Mod/Assembly` (counted from `git ls-files src/Mod/Assembly`).
 - OndselSolver in this checkout is a submodule pointer entry under `src/3rdParty/OndselSolver`.
-
